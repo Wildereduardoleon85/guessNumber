@@ -5,16 +5,14 @@ import {
   Text,
   View,
 } from 'react-native'
+import colors from '../constants/colors'
 
 type PrimaryButtonProps = {
   children: React.ReactNode
+  onPress: (event: GestureResponderEvent) => void
 }
 
-function PrimaryButton({ children }: Readonly<PrimaryButtonProps>) {
-  function pressHandler() {
-    console.log('pressed')
-  }
-
+function PrimaryButton({ children, onPress }: Readonly<PrimaryButtonProps>) {
   return (
     <View style={styles.buttonOuterContainer}>
       <Pressable
@@ -24,8 +22,8 @@ function PrimaryButton({ children }: Readonly<PrimaryButtonProps>) {
             ? [styles.buttonInnerContainer, styles.pressed]
             : styles.buttonInnerContainer
         }
-        android_ripple={{ color: '#640233' }}
-        onPress={pressHandler}
+        android_ripple={{ color: colors.primary600 }}
+        onPress={onPress}
       >
         <Text style={styles.buttonText}>{children}</Text>
       </Pressable>
@@ -40,13 +38,13 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   buttonInnerContainer: {
-    backgroundColor: '#72063c',
+    backgroundColor: colors.primary500,
     paddingHorizontal: 16,
     paddingVertical: 8,
     elevation: 2,
   },
   buttonText: {
-    color: '#fff',
+    color: 'white',
     textAlign: 'center',
   },
   pressed: {
