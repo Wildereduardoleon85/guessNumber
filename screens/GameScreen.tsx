@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react'
-import { Alert, StyleSheet, Text, View } from 'react-native'
+import { Alert, FlatList, StyleSheet, Text, View } from 'react-native'
 import Title from '../components/ui/Title'
 import NumberContainer from '../components/game/NumberContainer'
 import PrimaryButton from '../components/ui/PrimaryButton'
+import Card from '../components/ui/Card'
+import InstructionText from '../components/ui/InstructionText'
 import { Direction } from '../types'
+import FontAwesome from '@expo/vector-icons/FontAwesome'
 
 function generateRandomBetween(min: number, max: number, exclude: number) {
   const rndNumber = Math.floor(Math.random() * (max - min)) + min
@@ -26,12 +29,18 @@ type GameScreenProps = {
 function GameScreen({ userNumber, onGameOver }: Readonly<GameScreenProps>) {
   const initialGuess = generateRandomBetween(1, 100, userNumber)
   const [currentGuess, setCurrentGuess] = useState<number>(initialGuess)
+  const [guessRounds, setGuessRounds] = useState<number[]>([initialGuess])
 
   useEffect(() => {
     if (currentGuess === userNumber) {
       onGameOver()
     }
   }, [currentGuess, userNumber])
+
+  useEffect(() => {
+    minBoundary = 1
+    maxBoundary = 100
+  }, [])
 
   function nextGuessHandler(direction: Direction) {
     if (
@@ -55,20 +64,36 @@ function GameScreen({ userNumber, onGameOver }: Readonly<GameScreenProps>) {
       currentGuess
     )
     setCurrentGuess(newRndNumber)
+    setGuessRounds((prevGuessRounds) => [newRndNumber, ...prevGuessRounds])
   }
 
   return (
     <View style={styles.screen}>
       <Title>Opponent's Guess</Title>
       <NumberContainer>{currentGuess}</NumberContainer>
+      <Card>
+        <InstructionText style={styles.instructionText}>
+          Higher or lower?
+        </InstructionText>
+        <View style={styles.buttonsContainer}>
+          <View style={styles.buttonContainer}>
+            <PrimaryButton onPress={() => nextGuessHandler(Direction.lower)}>
+              <FontAwesome name='minus' size={16} color='white' />
+            </PrimaryButton>
+          </View>
+          <View style={styles.buttonContainer}>
+            <PrimaryButton onPress={() => nextGuessHandler(Direction.greater)}>
+              <FontAwesome name='plus' size={16} color='white' />
+            </PrimaryButton>
+          </View>
+        </View>
+      </Card>
       <View>
-        <Text>Higher or lower?</Text>
-        <PrimaryButton onPress={() => nextGuessHandler(Direction.lower)}>
-          -
-        </PrimaryButton>
-        <PrimaryButton onPress={() => nextGuessHandler(Direction.greater)}>
-          +
-        </PrimaryButton>
+        <FlatList
+          data={guessRounds}
+          renderItem={({ item }) => <Text>{item}</Text>}
+          keyExtractor={(item) => String(item)}
+        />
       </View>
     </View>
   )
@@ -79,6 +104,15 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 42,
     paddingHorizontal: 24,
+  },
+  buttonsContainer: {
+    flexDirection: 'row',
+  },
+  buttonContainer: {
+    flex: 1,
+  },
+  instructionText: {
+    marginBottom: 12,
   },
 })
 

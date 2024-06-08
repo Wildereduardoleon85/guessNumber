@@ -1,16 +1,17 @@
-import React from 'react'
-import { StyleSheet, Text } from 'react-native'
+import { StyleProp, StyleSheet, Text, TextStyle } from 'react-native'
 
 type TitleProps = {
   children: React.ReactNode
+  style?: StyleProp<TextStyle>
 }
 
-function Title({ children }: Readonly<TitleProps>) {
-  return <Text style={styles.title}>{children}</Text>
+function Title({ children, style }: Readonly<TitleProps>) {
+  return <Text style={[styles.title, style]}>{children}</Text>
 }
 
 const styles = StyleSheet.create({
   title: {
+    fontFamily: 'open-sans-bold',
     fontSize: 24,
     fontWeight: 'bold',
     color: 'white',
