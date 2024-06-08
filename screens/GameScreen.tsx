@@ -7,6 +7,7 @@ import Card from '../components/ui/Card'
 import InstructionText from '../components/ui/InstructionText'
 import { Direction } from '../types'
 import FontAwesome from '@expo/vector-icons/FontAwesome'
+import GuessLogItem from '../components/game/GuessLogItem'
 
 function generateRandomBetween(min: number, max: number, exclude: number) {
   const rndNumber = Math.floor(Math.random() * (max - min)) + min
@@ -23,7 +24,7 @@ let maxBoundary = 100
 
 type GameScreenProps = {
   userNumber: number
-  onGameOver: () => void
+  onGameOver: (numberOfRounds: number) => void
 }
 
 function GameScreen({ userNumber, onGameOver }: Readonly<GameScreenProps>) {
@@ -33,7 +34,7 @@ function GameScreen({ userNumber, onGameOver }: Readonly<GameScreenProps>) {
 
   useEffect(() => {
     if (currentGuess === userNumber) {
-      onGameOver()
+      onGameOver(guessRounds.length)
     }
   }, [currentGuess, userNumber])
 
@@ -88,10 +89,15 @@ function GameScreen({ userNumber, onGameOver }: Readonly<GameScreenProps>) {
           </View>
         </View>
       </Card>
-      <View>
+      <View style={styles.listContainer}>
         <FlatList
           data={guessRounds}
-          renderItem={({ item }) => <Text>{item}</Text>}
+          renderItem={({ item, index }) => (
+            <GuessLogItem
+              roundNumber={guessRounds.length - index}
+              guess={item}
+            />
+          )}
           keyExtractor={(item) => String(item)}
         />
       </View>
@@ -113,6 +119,10 @@ const styles = StyleSheet.create({
   },
   instructionText: {
     marginBottom: 12,
+  },
+  listContainer: {
+    flex: 1,
+    padding: 16,
   },
 })
 
